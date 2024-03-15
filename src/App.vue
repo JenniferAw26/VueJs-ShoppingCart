@@ -25,7 +25,7 @@ const saveItems = () => {
   newItem.value = "";
 };
  //Entrega Condicional
-//const noItemsMessage =ref (true);
+//const noItemsMessage =ref (true); cuando requiero alterar un valor de una variable, este debe alterar el metodo
 </script>
  
 <template>
@@ -33,7 +33,8 @@ const saveItems = () => {
   <div class="header">
     <h1> <i :class="shoppingIcon">local_mall</i>{{ header }}</h1>
     <button v-if="showForm" class="btn" @click="showForm = false">Cancelar ❌</button>
-    <button v-if="!showForm" class="btn" @click="showForm = true">Agregar Articulo ✅</button>
+    <button v-else  class="btn" @click="showForm = true">Agregar Articulo ✅</button>  
+    <!-- ! significa negativo -->
   </div>
   <!-- Formulario -->
   <form v-if="showForm"
