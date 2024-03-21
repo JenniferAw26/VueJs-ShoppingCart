@@ -26,6 +26,13 @@
   const characterCount = computed(()=>{
     return newItem.value.length;
   });
+const reversedItems = computed(()=>{
+
+  //Regresar una version invertida del arreglo "items"
+  // const clonedItems= [...items];
+  // return  clonedItems.reverse();
+  return [...items.value].reverse();
+});
   const newItemHighPriority = ref(false)
  
   //Creacion de Metodos, son funciones de javascript
@@ -86,8 +93,8 @@ const editing = ref(false);
   <!-- Entrega de Lista -->
   <ul>
     <li
-    v-for="({ id, label, purchased, highPriority }, index) in items"
-    @click="togglePurchased(items[index])"
+    v-for="({ id, label, purchased, highPriority }, index) in reversedItems"
+    @click="togglePurchased(reversedItems[index])"
     :class="{priority: highPriority, strikeout:purchased}"
     v-bind:key="id">
     🌟 {{ label }}
