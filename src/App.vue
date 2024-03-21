@@ -5,13 +5,15 @@ import { ref } from 'vue'
 const header = ref('App lista de compras');
 const shoppingIcon = ref("material-icons shopping-cart-icon")
 //Creando una referencia reactiva para almacenar el valor de la lista
-const items = ref([
-{id: 0 , label: 'Leche', purchased: false, highPriority: true},
-{id: 1 , label: 'Arroz' , purchased: false , highPriority: false},
-{id: 2 , label: 'Carne' , purchased: true , highPriority: false},
-{id: 3 , label: 'Pan' , purchased: false , highPriority: true},
-{id: 4 , label: 'Huevos', purchased: true , highPriority: true}
-]);
+const items = ref(
+//   [
+// {id: 0 , label: 'Leche', purchased: false, highPriority: true},
+// {id: 1 , label: 'Arroz' , purchased: false , highPriority: false},
+// {id: 2 , label: 'Carne' , purchased: true , highPriority: false},
+// {id: 3 , label: 'Pan' , purchased: false , highPriority: true},
+// {id: 4 , label: 'Huevos', purchased: true , highPriority: true}
+// ]
+);
  //Creacion del metodo toggle(alternador)
  const togglePurchased= (item) => {
   item.purchased = ! item.purchased
@@ -25,10 +27,20 @@ const showForm = ref(false); // Se crea variable reactiva para controlar la visi
 //Metodos, son funciones de javascript
 const saveItems = () => {
   //Agrega un nuevo elemento a la lista proveniente de la caja de texto
-  items.value.push({ id: items.value.length, label: newItem.value})
+  items.value.push({ 
+    id: items.value.length, 
+    label: newItem.value,
+  highPriority:newItemHighPriority.value})
   //Borramos el contenido de la caja de texto
-  newItem.value = "";
+  newItem.value = ""
+  newItemHighPriority.value = false;
 };
+const doEdit = (edit) => {
+  editing.value = edit;
+  newItem.value = "";
+  newItemHighPriority.value = false;
+}
+const editing = ref(false);
  //Entrega Condicional
 //const noItemsMessage =ref (true); cuando requiero alterar un valor de una variable, este debe alterar el metodo
 </script>
@@ -37,8 +49,11 @@ const saveItems = () => {
   <!-- Header lo que valga header, es una referencia reactiva y se pone en doble mostacho -->
   <div class="header">
     <h1> <i :class="shoppingIcon">local_mall</i>{{ header }}</h1>     
-    <button v-if="showForm" class="btn" @click="showForm = false">Cancelar ❌</button>
-    <button v-else  class="btn" @click="showForm = true">Agregar Articulo ✅</button>  
+    <!-- <button v-if="showForm" class="btn" @click="showForm = false">Cancelar ❌</button> RESPUESTAS DE EXAMEN 
+    <button v-else  class="btn" @click="showForm = true">Agregar Articulo ✅</button>   -->
+    <button 
+      v-on:click="doEdit(false)" v-if="editing" class="btn">Cancelar ❌</button>
+    <button v-else v-on:click="doEdit(true)" class="btn btn-primary"> Agregar Articulo ✅</button>
     <!-- ! significa negativo -->
   </div>
   <!-- Formulario -->
