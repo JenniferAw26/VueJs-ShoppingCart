@@ -1,66 +1,73 @@
 <script setup>
-//Importando una funcion para crear referencias reactivas
-import { ref } from 'vue'
-//Creando una referencia reactiva de tipo string
-const header = ref('App lista de compras');
-const shoppingIcon = ref("material-icons shopping-cart-icon")
-//Creando una referencia reactiva para almacenar el valor de la lista
-const items = ref(
-//   [
-// {id: 0 , label: 'Leche', purchased: false, highPriority: true},
-// {id: 1 , label: 'Arroz' , purchased: false , highPriority: false},
-// {id: 2 , label: 'Carne' , purchased: true , highPriority: false},
-// {id: 3 , label: 'Pan' , purchased: false , highPriority: true},
-// {id: 4 , label: 'Huevos', purchased: true , highPriority: true}
-// ]
-);
- //Creacion del metodo toggle(alternador)
- const togglePurchased= (item) => {
-  item.purchased = ! item.purchased
- };
-
-
-const newItem = ref('');
-const newItemHighPriority = ref(false)
-const showForm = ref(false); // Se crea variable reactiva para controlar la visibilidad de los botones en el formulario
+  //Importando una funcion para crear referencias reactivas
+  import { ref, computed } from 'vue'
  
-//Metodos, son funciones de javascript
-const saveItems = () => {
+  //Creando una referencia reactiva de tipo string
+  const header = ref('App lista de compras');
+  const shoppingIcon = ref("material-icons shopping-cart-icon")
+ 
+  //Creando una referencia reactiva para almacenar el valor de la lista
+  const items = ref([
+  //{id: 0 , label: 'Leche', purchased: false, highPriority: true},
+  //{id: 1 , label: 'Arroz', purchased: false, highPriority: false},
+  //{id: 2 , label: 'Carne', purchased: true, highPriority: false},
+  //{id: 3 , label: 'Pan', purchased: false, highPriority: true},
+  //{id: 4 , label: 'Huevos', purchased: true, highPriority: true}
+  ]);
+ 
+  //Creacion de un metodo para poder modificar cada uno de nuestros items
+  const togglePurchased = (item) =>
+  {
+    item.purchased = !item.purchased
+  }
+ 
+  const newItem = ref('');
+  //Computed es uan propiedad computada, con valores dinamicos (calcula, hace algo, es una funcion) pueden leer referencia reactivas, pero no alterarlas
+  const characterCount = computed(()=>{
+    return newItem.value.length;
+  });
+  const newItemHighPriority = ref(false)
+ 
+  //Creacion de Metodos, son funciones de javascript
+  const saveItems = () => {
   //Agrega un nuevo elemento a la lista proveniente de la caja de texto
-  items.value.push({ 
-    id: items.value.length, 
+  items.value.push({
+    id: items.value.length,
     label: newItem.value,
-  highPriority:newItemHighPriority.value})
+    highPriority:newItemHighPriority.value
+  })
+ 
   //Borramos el contenido de la caja de texto
-  newItem.value = ""
+  newItem.value = "";
   newItemHighPriority.value = false;
 };
+ 
 const doEdit = (edit) => {
   editing.value = edit;
   newItem.value = "";
   newItemHighPriority.value = false;
 }
 const editing = ref(false);
- //Entrega Condicional
-//const noItemsMessage =ref (true); cuando requiero alterar un valor de una variable, este debe alterar el metodo
 </script>
  
 <template>
-  <!-- Header lo que valga header, es una referencia reactiva y se pone en doble mostacho -->
+  <!-- Header -->
   <div class="header">
-    <h1> <i :class="shoppingIcon">local_mall</i>{{ header }}</h1>     
-    <!-- <button v-if="showForm" class="btn" @click="showForm = false">Cancelar ❌</button> RESPUESTAS DE EXAMEN 
-    <button v-else  class="btn" @click="showForm = true">Agregar Articulo ✅</button>   -->
-    <button 
-      v-on:click="doEdit(false)" v-if="editing" class="btn">Cancelar ❌</button>
-    <button v-else v-on:click="doEdit(true)" class="btn btn-primary"> Agregar Articulo ✅</button>
-    <!-- ! significa negativo -->
+    <h1>
+      <i :class="shoppingIcon">local_mall</i>{{ header }}
+    </h1>
+    <button v-on:click="doEdit(false)" v-if="editing" class="btn">Cancelar</button>
+    <button v-else v-on:click="doEdit(true)" class="btn btn-primary">Agregar Articulo</button>
   </div>
+ 
   <!-- Formulario -->
-  <form v-if="showForm"
+  <form
+    v-if="editing"
     v-on:submit.prevent="saveItems"
     class="add-item form">
-    <input v-model="newItem" type="text" placeholder="Agregar Articulo">
+    <input
+    v-model ="newItem" type="text"
+    placeholder="Agregar Articulo">
  
     <!-- Checkbox -->
     <label>
@@ -73,27 +80,31 @@ const editing = ref(false);
       class="btn btn-primary">
       Agregar Articulo
     </button>
+    <p class="counter"> {{ characterCount }} / 200</p>
   </form>
- <!-- Entrega de lista  con objetos-->
+ 
+  <!-- Entrega de Lista -->
   <ul>
-    <li v-for="({ id, label, purchased, highPriority },index) in items"
+    <li
+    v-for="({ id, label, purchased, highPriority }, index) in items"
     @click="togglePurchased(items[index])"
-    :class="{ priority: highPriority, strikeout:purchased}" 
+    :class="{priority: highPriority, strikeout:purchased}"
     v-bind:key="id">
-    🌟 {{ label }}</li>
+    🌟 {{ label }}
+    </li>
   </ul>
-
-  <!-- Nueva lista con clases y arreglos, dentro de :class solo utilizar opradores ternarios  -->
+ 
   <!-- <ul>
-    <li v-for="{ id, label, purchased, highPriority } in items"
-    :class="[purchased ? 'strikeout':'', highPriority ? 'priority':'']" 
+    <li
+    v-for="({ id, label, purchased, highPriority }, i) in items"
+    :class="[purchased ? 'strikeout' : '', highPriority ? 'priority' : '']"
     v-bind:key="id">
-    🌟 {{ label }}</li>
+    🌟 {{ label }}
+    </li>
   </ul> -->
-
-
-  <!-- Mensaje condicional -->
- <p v-if="items.length === 0"> 🥀No hay elementos en la lista🥀</p> 
+ 
+  <!-- Mensaje Condicional -->
+  <p v-if="items.length === 0">🥀 No hay elementos en la lista 🥀</p>
 </template>
  
 <style scoped>
@@ -101,3 +112,7 @@ const editing = ref(false);
   font-size: 2rem;
 }
 </style>
+tiene menú contextual
+
+
+tienes menú contextual
